@@ -1,0 +1,88 @@
+% Definim cateva variabile globale
+variable x ::= { a, b, c } ;
+variable z ::= { 0, 1, 2 } ;
+
+% O gramatica regulata
+grammar_reg ::= Grammar (
+    /* comentariu
+    pe
+    mai
+    multe
+    linii */
+    nonterminals :: { S, A, B } ;
+    alphabet :: { a, b, c } ;
+    start_symbol :: S ;
+    S -> a&A | b&B ;
+    A -> a&A | b&B | c ;
+    B -> b&B | a&A | e ;
+) ;;
+
+% O gramatica independenta de context
+grammar_ic ::= Grammar (
+    alphabet :: { a, b } ;
+    nonterminals :: { S, T } ;
+    start_symbol :: S ;
+    variable localvariable ::= { a, b } ;
+    S -> a&S&b | T ;
+    T -> a&T&b | e ;
+) ;;
+
+% Un automat determinist cu variabila locala
+automata_det ::= FiniteAutomaton (
+    alphabet :: { a, b } ;
+    states :: { q0, q1, q2, q3 } ;
+    final_states :: { q2, q3 } ;
+    initial_state :: q0 ;
+    variable y ::= { a, b } ;
+    q0 -> (
+        a -> q1 ;
+        b -> q2 ;
+    ) ;
+    q1 -> (
+        a -> q2 ;
+        b -> q3 ;
+    ) ;
+    q2 -> (
+        y -> q2 ;
+    ) ;
+    q3 -> (
+        a -> q2 ;
+        b -> q3 ;
+    ) ;
+) ;;
+
+% Un automat nedeterminist cu e-tranzitii
+automata_nedet ::= FiniteAutomaton (
+    alphabet :: { a, b } ;
+    states :: { q0, q1, q2 } ;
+    final_states :: { q2 } ;
+    initial_state :: q0 ;
+    q0 -> (
+        e -> q1 ;
+        a -> q1 ;
+    ) ;
+    q1 -> (
+        b -> q1 ;
+        b -> q2 ;
+        e -> q2 ;
+    ) ;
+    q2 -> (
+        a -> q2 ;
+        b -> q2 ;
+    ) ;
+) ;;
+
+% Un automat care foloseste o variabila globala
+automata_global ::= FiniteAutomaton (
+    alphabet :: { a, b, c } ;
+    states :: { q0, q1 } ;
+    final_states :: { q1 } ;
+    initial_state :: q0 ;
+    q0 -> (
+        x -> q1 ;
+    ) ;
+    q1 -> (
+        % z nu va fi luat in considerare deoarece domeniul sau nu contine nicio litera din alfabetul automatului
+        z -> q1 ;
+    ) ;
+) ;;

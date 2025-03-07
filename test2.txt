@@ -1,0 +1,71 @@
+% O gramatica dependenta de context
+grammar_GDC ::= Grammar (
+    nonterminals :: { S, A, B, C } ;
+    alphabet :: { a, b, c } ;
+    start_symbol :: S ;
+    A&B -> B&A ;
+    a&A -> A&a ;       
+    b&B -> B&b ;        
+    S -> A&B&C ;
+    A -> a&A | a ;
+    B -> b&B | b ;
+    C -> c ;
+) ;;
+
+% O gramatica fara restrictii
+grammar_GFR ::= Grammar (
+    nonterminals :: { S, A, B } ;
+    alphabet :: { a, b } ;
+    start_symbol :: S ;
+    S&a -> a&a&S ;       
+    a&S&b -> S ;
+    A&B -> b&A ;
+    S -> A&B | e ;
+    A&b -> b&b ;
+) ;;
+
+
+% Un automat cu variabila locala
+automaton_var ::= FiniteAutomaton (
+    alphabet :: { x, y, z } ;
+    states :: { q0, q1, q2 } ;
+    final_states :: { q2 } ;
+    initial_state :: q0 ;
+    % Variabila locala pentru automat
+    variable local_var ::= { x, y, z } ;
+    q0 -> (
+        x -> q1 ;
+        y -> q0 ;
+    ) ;
+    q1 -> (
+        local_var -> q2 ;
+    ) ;
+    q2 -> (
+        z -> q2 ;
+    ) ;
+) ;;
+
+% Un automat nedeterminist cu mai multe tranzitii
+automaton_complex ::= FiniteAutomaton (
+    alphabet :: { a, b } ;
+    states :: { q0, q1, q2, q3 } ;
+    final_states :: { q2, q3 } ;
+    initial_state :: q0 ;
+    q0 -> (
+        a -> q1 ;
+        a -> q2 ;
+        e -> q3 ;
+    ) ;
+    q1 -> (
+        b -> q2 ;
+        b -> q3 ;
+    ) ;
+    q2 -> (
+        a -> q2 ;
+        b -> q1 ;
+    ) ;
+    q3 -> (
+        e -> q1 ;
+        a -> q3 ;
+    ) ;
+) ;;
